@@ -11,8 +11,10 @@ import (
 )
 
 var (
-	headerData  = []byte("data: ")
-	errorPrefix = []byte(`data: {"error":`)
+	headerData         = []byte("data: ")
+	headerDataNoSpace  = []byte("data:")
+	errorPrefix        = []byte(`data: {"error":`)
+	errorPrefixNoSpace = []byte(`data:{"error":`)
 )
 
 type streamable interface {
@@ -59,12 +61,13 @@ func (stream *streamReader[T]) processLines() (T, error) {
 		}
 
 		noSpaceLine := bytes.TrimSpace(rawLine)
-		if bytes.HasPrefix(noSpaceLine, errorPrefix) {
+		if bytes.HasPrefix(noSpaceLine, errorPrefix) || bytes.HasPrefix(noSpaceLine, errorPrefixNoSpace) {
 			hasErrorPrefix = true
 		}
-		if !bytes.HasPrefix(noSpaceLine, headerData) || hasErrorPrefix {
+		if !bytes.HasPrefix(noSpaceLine, headerData) || !bytes.HasPrefix(noSpaceLine, headerDataNoSpace) || hasErrorPrefix {
 			if hasErrorPrefix {
 				noSpaceLine = bytes.TrimPrefix(noSpaceLine, headerData)
+				noSpaceLine = bytes.TrimPrefix(noSpaceLine, headerDataNoSpace)
 			}
 			writeErr := stream.errAccumulator.Write(noSpaceLine)
 			if writeErr != nil {
@@ -79,6 +82,7 @@ func (stream *streamReader[T]) processLines() (T, error) {
 		}
 
 		noPrefixLine := bytes.TrimPrefix(noSpaceLine, headerData)
+		noPrefixLine = bytes.TrimPrefix(noPrefixLine, headerDataNoSpace)
 		if string(noPrefixLine) == "[DONE]" {
 			stream.isFinished = true
 			return *new(T), io.EOF
