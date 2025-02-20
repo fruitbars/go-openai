@@ -96,6 +96,7 @@ type ChatCompletionMessage struct {
 	Role             string `json:"role"`
 	Content          string `json:"content,omitempty"`
 	ReasoningContent string `json:"reasoning_content,omitempty"`
+	Reasoning        string `json:"reasoning,omitempty"`
 	Refusal          string `json:"refusal,omitempty"`
 	MultiContent     []ChatMessagePart
 
@@ -123,6 +124,7 @@ func (m ChatCompletionMessage) MarshalJSON() ([]byte, error) {
 			Role             string            `json:"role"`
 			Content          string            `json:"-"`
 			ReasoningContent string            `json:"reasoning_content,omitempty"`
+			Reasoning        string            `json:"reasoning,omitempty"`
 			Refusal          string            `json:"refusal,omitempty"`
 			MultiContent     []ChatMessagePart `json:"content,omitempty"`
 			Name             string            `json:"name,omitempty"`
@@ -137,6 +139,7 @@ func (m ChatCompletionMessage) MarshalJSON() ([]byte, error) {
 		Role             string            `json:"role"`
 		Content          string            `json:"content,omitempty"`
 		ReasoningContent string            `json:"reasoning_content,omitempty"`
+		Reasoning        string            `json:"reasoning,omitempty"`
 		Refusal          string            `json:"refusal,omitempty"`
 		MultiContent     []ChatMessagePart `json:"-"`
 		Name             string            `json:"name,omitempty"`
@@ -152,6 +155,7 @@ func (m *ChatCompletionMessage) UnmarshalJSON(bs []byte) error {
 		Role             string `json:"role"`
 		Content          string `json:"content,omitempty"`
 		ReasoningContent string `json:"reasoning_content,omitempty"`
+		Reasoning        string `json:"reasoning,omitempty"`
 		Refusal          string `json:"refusal,omitempty"`
 		MultiContent     []ChatMessagePart
 		Name             string        `json:"name,omitempty"`
@@ -168,6 +172,7 @@ func (m *ChatCompletionMessage) UnmarshalJSON(bs []byte) error {
 		Role             string `json:"role"`
 		Content          string
 		ReasoningContent string            `json:"reasoning_content,omitempty"`
+		Reasoning        string            `json:"reasoning,omitempty"`
 		Refusal          string            `json:"refusal,omitempty"`
 		MultiContent     []ChatMessagePart `json:"content"`
 		Name             string            `json:"name,omitempty"`
@@ -267,7 +272,8 @@ type ChatCompletionRequest struct {
 	// Controls effort on reasoning for reasoning models. It can be set to "low", "medium", or "high".
 	ReasoningEffort string `json:"reasoning_effort,omitempty"`
 	// Metadata to store with the completion.
-	Metadata map[string]string `json:"metadata,omitempty"`
+	Metadata         map[string]string `json:"metadata,omitempty"`
+	IncludeReasoning bool              `json:"include_reasoning,omitempty"`
 }
 
 type StreamOptions struct {
